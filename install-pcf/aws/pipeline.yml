@@ -276,32 +276,18 @@ jobs:
       OPSMAN_CLIENT_SECRET: ""
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
+      pcf_az_1: {{aws_az1}}
+      pcf_az_2: {{aws_az2}}
+      pcf_az_3: {{aws_az3}}
+      terraform_prefix: {{terraform_prefix}}
+      S3_ENDPOINT: {{S3_ENDPOINT}}
+      mysql_monitor_recipient_email: {{mysql_monitor_recipient_email}}
       HAPROXY_FORWARD_TLS: {{haproxy_forward_tls}}
       ROUTER_TLS_CIPHERS: {{router_tls_ciphers}}
       HAPROXY_TLS_CIPHERS: {{haproxy_tls_ciphers}}
       SECURITY_ACKNOWLEDGEMENT: {{security_acknowledgement}}
-      SYSTEM_DOMAIN: {{system_domain}}
-      APPS_DOMAIN: {{apps_domain}}
-      INTERNET_CONNECTED: {{internet_connected}}
-      MYSQL_BACKUPS: {{mysql_backups}}
-      NETWORK_NAME: deployment
-      DEPLOYMENT_NW_AZS: {{all-azs}}
-      ERT_SINGLETON_JOB_AZ: {{aws_az1}}
-      DEFAULT_QUOTA_MEMORY_LIMIT_IN_MB: 102400
-      DEFAULT_QUOTA_MAX_SERVICES_COUNT: 100
-      MYSQL_MONITOR_EMAIL: azwickey@pivotal.io
-      ROUTER_REQUEST_TIMEOUT_IN_SEC: 900
-      ALLOW_APP_SSH_ACCESS: true
-      DATABASE_INSTANCES: 1
-      BLOBSTORE_INSTANCES: 1
-      CONTROL_INSTANCES: 1
-      COMPUTE_INSTANCES: 3
-      BACKUP_PREPARE_INSTANCES: 0
-      HA_PROXY_INSTANCES: 0
-      ROUTER_INSTANCES: 1
-      MYSQL_MONITOR_INSTANCES: 0
-      TCP_ROUTER_INSTANCES: 1
-      terraform_prefix: {{terraform_prefix}}
+      OPSMAN_CLIENT_ID: ""
+      OPSMAN_CLIENT_SECRET: ""
 
   - task: disable-errands
     file: pcf-pipelines/tasks/disable-errands/task.yml

@@ -42,6 +42,7 @@ groups:
   - set-rc-gcp-upgrade-pas-tile
   - trigger-rc-gcp-upgrade-pas-tile
   - lock-gcp-lre
+  - cleanup-gcp-lre
   - force-unlock-vsphere-install-pcf
   - force-unlock-gcp-install-pcf
   - force-unlock-gcp-install-pcf
@@ -123,6 +124,7 @@ groups:
   - lock-gcp-lre
   - check-environments-complete
   - force-unlock-lre-gcp-upgrade-opsman
+  - cleanup-gcp-lre
 
 resource_types:
 - name: smuggler
@@ -226,12 +228,13 @@ resources:
 - name: version
   type: semver
   source:
-    driver: git
-    initial_version: 0.1.0-rc.1
-    uri: git@github.com:pivotal-cf/pcf-pipelines.git
-    private_key: {{git_private_key}}
-    branch: version
-    file: version
+    driver: s3
+    initial_version: 0.23.2-rc.50
+    bucket: {{version_bucket_name}}
+    key: version
+    region_name: {{version_bucket_region}}
+    access_key_id: {{aws_access_key_id}}
+    secret_access_key: {{aws_secret_access_key}}
 
 - name: slack
   type: slack-notification
@@ -742,12 +745,36 @@ jobs:
       passed: [ trigger-rc-gcp-upgrade-pas-tile ]
     - get: rootfs-tag
       passed: [ trigger-rc-gcp-upgrade-pas-tile ]
-  - task: trigger-gcp-rc-wipe-env
-    file: pcf-pipelines/tasks/trigger-jobs/task.yml
-    params:
-      <<: *atc_creds
-      JOBS: |
-        rc-gcp-install/wipe-env
+  - do:
+    - task: trigger-gcp-rc-wipe-env
+      file: pcf-pipelines/tasks/trigger-jobs/task.yml
+      params:
+        <<: *atc_creds
+        JOBS: |
+          rc-gcp-install/wipe-env
+    - task: cleanup-upgraded-opsmanagers
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: google/cloud-sdk
+        params:
+          GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
+        run:
+          path: bash
+          args:
+          - -c
+          - |
+            set -eu
+
+            gcloud auth activate-service-account --key-file <(echo "$GCP_SERVICE_ACCOUNT_KEY")
+            gcloud compute instances list --filter="rc AND ops-man AND TERMINATED" | \
+              awk 'NR > 1
+                {
+                  system("gcloud compute instances delete --delete-disks=all " $1 " --quiet --zone " $2)
+                }'
+
   - try:
       put: gcp-lock
       params: {release: gcp-lock}
@@ -844,6 +871,44 @@ jobs:
         lre-gcp-upgrade-ops-manager/upgrade-opsmgr
   on_failure:
     <<: *notify_slack
+
+- name: cleanup-gcp-lre
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      passed: [ trigger-lre-gcp-upgrade-ops-manager ]
+      trigger: true
+    - get: gcp-lock
+      passed: [ trigger-lre-gcp-upgrade-ops-manager ]
+    - get: pivnet-rc
+      passed: [ trigger-lre-gcp-upgrade-ops-manager ]
+    - get: rootfs-tag
+      passed: [ trigger-lre-gcp-upgrade-ops-manager ]
+
+
+  - task: cleanup-upgraded-opsmanagers
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: google/cloud-sdk
+      params:
+        GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          set -eu
+
+          gcloud auth activate-service-account --key-file <(echo "$GCP_SERVICE_ACCOUNT_KEY")
+          gcloud compute instances list --filter="lre AND ops-man AND TERMINATED" | \
+            awk 'NR > 1
+              {
+                system("gcloud compute instances delete --delete-disks=all " $1 " --quiet --zone " $2)
+              }'
+
 
 ####### END GCP LRE
 
@@ -1194,7 +1259,7 @@ jobs:
           JOB: deploy-ert
           TIMEOUT_MINUTES: 240
           DISABLE_PIVNET_VERSION_CHECK: false
-          <<: *atc_creds
+          <<: *vsphere_atc_creds
     - do:
       - task: check-azure
         file: pcf-pipelines/ci/tasks/check-environments/task.yml
@@ -1415,14 +1480,14 @@ jobs:
       passed: [ trigger-unpack-pipelines-combined ]
   - task: check-pipeline-exists
     params:
-      <<: *atc_creds
+      <<: *vsphere_atc_creds
       PIPELINE_NAME: {{rc_offline_pipeline_name}}
       TIMEOUT_MINUTES: 5
     file: pcf-pipelines/ci/tasks/check-pipeline-exists/task.yml
   - task: unpause-rc-vsphere-offline-install
     params:
       PIPELINE_NAME: {{rc_offline_pipeline_name}}
-      <<: *atc_creds
+      <<: *vsphere_atc_creds
     file: pcf-pipelines/ci/tasks/unpause_pipeline.yml
   - task: trigger-rc-vsphere-offline-wipe-env
     file: pcf-pipelines/tasks/trigger-jobs/task.yml
