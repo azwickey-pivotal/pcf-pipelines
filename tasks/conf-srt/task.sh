@@ -30,6 +30,96 @@ if [[ -z "$SAML_SSL_CERT" ]]; then
   SAML_SSL_PRIVATE_KEY=$(echo $saml_certificates | jq --raw-output '.key')
 fi
 
+function formatCredhubEncryptionKeysJson() {
+    local credhub_encryption_key_name1="${1}"
+    local credhub_encryption_key_secret1=${2//$'\n'/'\n'}
+    local credhub_primary_encryption_name="${3}"
+    credhub_encryption_keys_json="{
+            \"name\": \"$credhub_encryption_key_name1\",
+            \"key\":{
+                \"secret\": \"$credhub_encryption_key_secret1\"
+             }"
+    if [[ "${credhub_primary_encryption_name}" == $credhub_encryption_key_name1 ]]; then
+        credhub_encryption_keys_json="$credhub_encryption_keys_json, \"primary\": true}"
+    else
+        credhub_encryption_keys_json="$credhub_encryption_keys_json}"
+    fi
+    echo "$credhub_encryption_keys_json"
+}
+
+credhub_encryption_keys_json=$(formatCredhubEncryptionKeysJson "${CREDUB_ENCRYPTION_KEY_NAME1}" "${CREDUB_ENCRYPTION_KEY_SECRET1}" "${CREDHUB_PRIMARY_ENCRYPTION_NAME}")
+if isPopulated "${CREDUB_ENCRYPTION_KEY_NAME2}"; then
+    credhub_encryption_keys_json2=$(formatCredhubEncryptionKeysJson "${CREDUB_ENCRYPTION_KEY_NAME2}" "${CREDUB_ENCRYPTION_KEY_SECRET2}" "${CREDHUB_PRIMARY_ENCRYPTION_NAME}")
+    credhub_encryption_keys_json="$credhub_encryption_keys_json,$credhub_encryption_keys_json2"
+fi
+if isPopulated "${CREDUB_ENCRYPTION_KEY_NAME3}"; then
+    credhub_encryption_keys_json3=$(formatCredhubEncryptionKeysJson "${CREDUB_ENCRYPTION_KEY_NAME3}" "${CREDUB_ENCRYPTION_KEY_SECRET3}" "${CREDHUB_PRIMARY_ENCRYPTION_NAME}")
+    credhub_encryption_keys_json="$credhub_encryption_keys_json,$credhub_encryption_keys_json3"
+fi
+credhub_encryption_keys_json="[$credhub_encryption_keys_json]"
+
+if [[ "${pcf_iaas}" == "aws" ]]; then
+  if [[ ${POE_SSL_NAME1} == "" || ${POE_SSL_NAME1} == "null" ]]; then
+    domains=(
+        "*.${SYSTEM_DOMAIN}"
+        "*.${APPS_DOMAIN}"
+        "*.login.${SYSTEM_DOMAIN}"
+        "*.uaa.${SYSTEM_DOMAIN}"
+    )
+
+    certificate=$(generate_cert "${domains[*]}")
+    pcf_ert_ssl_cert=`echo $certificate | jq '.certificate'`
+    pcf_ert_ssl_key=`echo $certificate | jq '.key'`
+    networking_poe_ssl_certs_json="[
+      {
+        \"name\": \"Certificate 1\",
+        \"certificate\": {
+          \"cert_pem\": $pcf_ert_ssl_cert,
+          \"private_key_pem\": $pcf_ert_ssl_key
+        }
+      }
+    ]"
+  else
+    cert=${POE_SSL_CERT1//$'\n'/'\n'}
+    key=${POE_SSL_KEY1//$'\n'/'\n'}
+    networking_poe_ssl_certs_json="[{
+      \"name\": \"$POE_SSL_NAME1\",
+      \"certificate\": {
+        \"cert_pem\": \"$cert\",
+        \"private_key_pem\": \"$key\"
+      }
+    }]"
+  fi
+
+  cd terraform-state
+    output_json=$(terraform output --json -state *.tfstate)
+    db_host=$(echo $output_json | jq --raw-output '.db_host.value')
+    aws_region=$(echo $output_json | jq --raw-output '.region.value')
+    aws_access_key=`terraform state show aws_iam_access_key.pcf_iam_user_access_key | grep ^id | awk '{print $3}'`
+    aws_secret_key=`terraform state show aws_iam_access_key.pcf_iam_user_access_key | grep ^secret | awk '{print $3}'`
+  cd -
+elif [[ "${pcf_iaas}" == "gcp" ]]; then
+  cd terraform-state
+    db_host=$(terraform output --json -state *.tfstate | jq --raw-output '.sql_instance_ip.value')
+    pcf_ert_ssl_cert="$(terraform output -json ert_certificate | jq .value)"
+    pcf_ert_ssl_key="$(terraform output -json ert_certificate_key | jq .value)"
+  cd -
+
+  if [ -z "$db_host" ]; then
+    echo Failed to get SQL instance IP from Terraform state file
+    exit 1
+  fi
+  networking_poe_ssl_certs_json="[
+    {
+      \"name\": \"Certificate 1\",
+      \"certificate\": {
+        \"cert_pem\": $pcf_ert_ssl_cert,
+        \"private_key_pem\": $pcf_ert_ssl_key
+      }
+    }
+  ]"
+fi
+
 cf_properties=$(
   jq -n \
     --arg tcp_routing "$TCP_ROUTING" \
@@ -157,7 +247,12 @@ cf_properties=$(
       },
       ".mysql_proxy.static_ips": {
         "value": $mysql_static_ips
-      }
+      },
+      ".properties.uaa_database": { "value": "external" },
+      ".properties.uaa_database.external.host": { "value": $db_host },
+      ".properties.uaa_database.external.port": { "value": "3306" },
+      ".properties.uaa_database.external.uaa_username": { "value": $db_uaa_username },
+      ".properties.uaa_database.external.uaa_password": { "value": { "secret": $db_uaa_password } },
     }
 
     +
