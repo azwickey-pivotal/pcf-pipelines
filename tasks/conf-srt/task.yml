@@ -11,7 +11,7 @@ inputs:
   - name: pcf-pipelines
 
 run:
-  path: pcf-pipelines/tasks/config-srt/task.sh
+  path: pcf-pipelines/tasks/conf-srt/task.sh
 
 params:
   IAAS:
