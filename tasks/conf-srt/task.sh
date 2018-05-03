@@ -30,6 +30,20 @@ if [[ -z "$SAML_SSL_CERT" ]]; then
   SAML_SSL_PRIVATE_KEY=$(echo $saml_certificates | jq --raw-output '.key')
 fi
 
+function isPopulated() {
+    local true=0
+    local false=1
+    local envVar="${1}"
+
+    if [[ "${envVar}" == "" ]]; then
+        return ${false}
+    elif [[ "${envVar}" == null ]]; then
+        return ${false}
+    else
+        return ${true}
+    fi
+}
+
 function formatCredhubEncryptionKeysJson() {
     local credhub_encryption_key_name1="${1}"
     local credhub_encryption_key_secret1=${2//$'\n'/'\n'}
@@ -58,7 +72,7 @@ if isPopulated "${CREDUB_ENCRYPTION_KEY_NAME3}"; then
 fi
 credhub_encryption_keys_json="[$credhub_encryption_keys_json]"
 
-if [[ "${pcf_iaas}" == "aws" ]]; then
+if [[ "${IAAS}" == "aws" ]]; then
   if [[ ${POE_SSL_NAME1} == "" || ${POE_SSL_NAME1} == "null" ]]; then
     domains=(
         "*.${SYSTEM_DOMAIN}"
@@ -98,7 +112,7 @@ if [[ "${pcf_iaas}" == "aws" ]]; then
     aws_access_key=`terraform state show aws_iam_access_key.pcf_iam_user_access_key | grep ^id | awk '{print $3}'`
     aws_secret_key=`terraform state show aws_iam_access_key.pcf_iam_user_access_key | grep ^secret | awk '{print $3}'`
   cd -
-elif [[ "${pcf_iaas}" == "gcp" ]]; then
+elif [[ "${IAAS}" == "gcp" ]]; then
   cd terraform-state
     db_host=$(terraform output --json -state *.tfstate | jq --raw-output '.sql_instance_ip.value')
     pcf_ert_ssl_cert="$(terraform output -json ert_certificate | jq .value)"
