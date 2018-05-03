@@ -45,6 +45,7 @@ if [ -n "$STEMCELL_VERSION" ]; then
 
   if [[ -z "$stemcell" ]]; then
     echo "Downloading stemcell $STEMCELL_VERSION"
+    echo "TOKEN $PIVNET_API_TOKEN"
 
     product_slug=$(
       jq --raw-output \
