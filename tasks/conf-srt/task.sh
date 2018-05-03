@@ -203,6 +203,9 @@ cf_properties=$(
     --arg mysql_backups_scp_destination "$MYSQL_BACKUPS_SCP_DESTINATION" \
     --arg mysql_backups_scp_cron_schedule "$MYSQL_BACKUPS_SCP_CRON_SCHEDULE" \
     --arg container_networking_nw_cidr "$CONTAINER_NETWORKING_NW_CIDR" \
+    --arg db_host "$db_host" \
+    --arg db_uaa_username "$db_uaa_username" \
+    --arg db_uaa_password "$db_uaa_password" \
     '
     {
       ".properties.system_blobstore": {
