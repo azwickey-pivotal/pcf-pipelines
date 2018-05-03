@@ -666,26 +666,6 @@ cf_resources=$(
     --argjson tcp_router_instances $TCP_ROUTER_INSTANCES \
     --arg ha_proxy_elb_name "$HA_PROXY_LB_NAME" \
     --arg ha_proxy_floating_ips "$HAPROXY_FLOATING_IPS" \
-    --arg tcp_router_nsx_security_group "${TCP_ROUTER_NSX_SECURITY_GROUP}" \
-    --arg tcp_router_nsx_lb_edge_name "${TCP_ROUTER_NSX_LB_EDGE_NAME}" \
-    --arg tcp_router_nsx_lb_pool_name "${TCP_ROUTER_NSX_LB_POOL_NAME}" \
-    --arg tcp_router_nsx_lb_security_group "${TCP_ROUTER_NSX_LB_SECURITY_GROUP}" \
-    --arg tcp_router_nsx_lb_port "${TCP_ROUTER_NSX_LB_PORT}" \
-    --arg router_nsx_security_group "${ROUTER_NSX_SECURITY_GROUP}" \
-    --arg router_nsx_lb_edge_name "${ROUTER_NSX_LB_EDGE_NAME}" \
-    --arg router_nsx_lb_pool_name "${ROUTER_NSX_LB_POOL_NAME}" \
-    --arg router_nsx_lb_security_group "${ROUTER_NSX_LB_SECURITY_GROUP}" \
-    --arg router_nsx_lb_port "${ROUTER_NSX_LB_PORT}" \
-    --arg diego_brain_nsx_security_group "${DIEGO_BRAIN_NSX_SECURITY_GROUP}" \
-    --arg diego_brain_nsx_lb_edge_name "${DIEGO_BRAIN_NSX_LB_EDGE_NAME}" \
-    --arg diego_brain_nsx_lb_pool_name "${DIEGO_BRAIN_NSX_LB_POOL_NAME}" \
-    --arg diego_brain_nsx_lb_security_group "${DIEGO_BRAIN_NSX_LB_SECURITY_GROUP}" \
-    --arg diego_brain_nsx_lb_port "${DIEGO_BRAIN_NSX_LB_PORT}" \
-    --arg mysql_nsx_security_group "${MYSQL_NSX_SECURITY_GROUP}" \
-    --arg mysql_nsx_lb_edge_name "${MYSQL_NSX_LB_EDGE_NAME}" \
-    --arg mysql_nsx_lb_pool_name "${MYSQL_NSX_LB_POOL_NAME}" \
-    --arg mysql_nsx_lb_security_group "${MYSQL_NSX_LB_SECURITY_GROUP}" \
-    --arg mysql_nsx_lb_port "${MYSQL_NSX_LB_PORT}" \
     '
     {
         "database": { "instances": $database_instances },
@@ -748,90 +728,14 @@ cf_resources=$(
 
     |
 
-    # NSX LBs
-
-    if $tcp_router_nsx_lb_edge_name != "" then
-      .tcp_router |= . + {
-        "nsx_security_groups": [$tcp_router_nsx_security_group],
-        "nsx_lbs": [
-          {
-            "edge_name": $tcp_router_nsx_lb_edge_name,
-            "pool_name": $tcp_router_nsx_lb_pool_name,
-            "security_group": $tcp_router_nsx_lb_security_group,
-            "port": $tcp_router_nsx_lb_port
-          }
-        ]
-      }
-    else
-      .
-    end
-
-    |
-
-    if $router_nsx_lb_edge_name != "" then
-      .router |= . + {
-        "nsx_security_groups": [$router_nsx_security_group],
-        "nsx_lbs": [
-          {
-            "edge_name": $router_nsx_lb_edge_name,
-            "pool_name": $router_nsx_lb_pool_name,
-            "security_group": $router_nsx_lb_security_group,
-            "port": $router_nsx_lb_port
-          }
-        ]
-      }
-    else
-      .
-    end
-
-    |
-
-    if $diego_brain_nsx_lb_edge_name != "" then
-      .diego_brain |= . + {
-        "nsx_security_groups": [$diego_brain_nsx_security_group],
-        "nsx_lbs": [
-          {
-            "edge_name": $diego_brain_nsx_lb_edge_name,
-            "pool_name": $diego_brain_nsx_lb_pool_name,
-            "security_group": $diego_brain_nsx_lb_security_group,
-            "port": $diego_brain_nsx_lb_port
-          }
-        ]
-      }
-    else
-      .
-    end
-
-    |
-
-    # MySQL
-
-    if $mysql_nsx_lb_edge_name != "" then
-      .mysql |= . + {
-        "nsx_security_groups": [$mysql_nsx_security_group],
-        "nsx_lbs": [
-          {
-            "edge_name": $mysql_nsx_lb_edge_name,
-            "pool_name": $mysql_nsx_lb_pool_name,
-            "security_group": $mysql_nsx_lb_security_group,
-            "port": $mysql_nsx_lb_port
-          }
-        ]
-      }
-    else
-      .
-    end
-
-    |
-
     # ELBs
 
     if $iaas == "aws" then
       .router |= . + { "elb_names": ["\($terraform_prefix)-Pcf-Http-Elb"] }
-      | .diego_brain |= . + { "elb_names": ["\($terraform_prefix)-Pcf-Ssh-Elb"] }
+      | .control |= . + { "elb_names": ["\($terraform_prefix)-Pcf-Ssh-Elb"] }
     elif $iaas == "gcp" then
       .router |= . + { "elb_names": ["http:\($terraform_prefix)-http-lb-backend","tcp:\($terraform_prefix)-wss-logs"] }
-      | .diego_brain |= . + { "elb_names": ["tcp:\($terraform_prefix)-ssh-proxy"] }
+      | .control |= . + { "elb_names": ["tcp:\($terraform_prefix)-ssh-proxy"] }
     else
       .
     end
