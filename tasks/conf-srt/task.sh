@@ -836,7 +836,6 @@ cf_resources=$(
       .
     end
     '
-    '
 )
 
 om-linux \
