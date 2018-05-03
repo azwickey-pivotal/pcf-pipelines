@@ -136,6 +136,7 @@ fi
 
 cf_properties=$(
   jq -n \
+    --arg iaas $IAAS \
     --arg terraform_prefix $terraform_prefix \
     --arg tcp_routing "$TCP_ROUTING" \
     --arg tcp_routing_ports "$TCP_ROUTING_PORTS" \
@@ -652,7 +653,7 @@ cf_network=$(
 cf_resources=$(
   jq -n \
     --arg terraform_prefix $terraform_prefix \
-    --arg iaas $pcf_iaas \
+    --arg iaas $IAAS \
     --argjson internet_connected $INTERNET_CONNECTED \
     --argjson database_instances $DATABASE_INSTANCES \
     --argjson blobstore_instances $BLOBSTORE_INSTANCES \
