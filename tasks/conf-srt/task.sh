@@ -239,6 +239,7 @@ cf_properties=$(
     --argjson credhub_encryption_keys "$credhub_encryption_keys_json" \
     --argjson networking_poe_ssl_certs "$networking_poe_ssl_certs_json" \
     --arg container_networking_nw_cidr "$CONTAINER_NETWORKING_NW_CIDR" \
+    --argjson credhub_encryption_keys "$credhub_encryption_keys_json" \
     '
     {
       ".properties.system_blobstore": {
@@ -351,6 +352,13 @@ cf_properties=$(
     end
 
     +
+
+    # Credhub encryption keys
+    {
+      ".properties.credhub_key_encryption_passwords": {
+        "value": $credhub_encryption_keys
+      }
+    }
 
     # TCP Routing
     if $tcp_routing == "enable" then
