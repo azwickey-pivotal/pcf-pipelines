@@ -641,7 +641,8 @@ cf_network=$(
 
 cf_resources=$(
   jq -n \
-    --arg iaas "$IAAS" \
+    --arg terraform_prefix $terraform_prefix \
+    --arg iaas $pcf_iaas \
     --argjson internet_connected $INTERNET_CONNECTED \
     --argjson database_instances $DATABASE_INSTANCES \
     --argjson blobstore_instances $BLOBSTORE_INSTANCES \
