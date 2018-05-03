@@ -361,6 +361,37 @@ cf_properties=$(
 
     +
 
+    # Blobstore
+
+    if $iaas == "aws" then
+      {
+        ".properties.system_blobstore": { "value": "external" },
+        ".properties.system_blobstore.external.buildpacks_bucket": { "value": "\($terraform_prefix)-buildpacks" },
+        ".properties.system_blobstore.external.droplets_bucket": { "value": "\($terraform_prefix)-droplets" },
+        ".properties.system_blobstore.external.packages_bucket": { "value": "\($terraform_prefix)-packages" },
+        ".properties.system_blobstore.external.resources_bucket": { "value": "\($terraform_prefix)-resources" },
+        ".properties.system_blobstore.external.access_key": { "value": $aws_access_key },
+        ".properties.system_blobstore.external.secret_key": { "value": { "secret": $aws_secret_key } },
+        ".properties.system_blobstore.external.signature_version.value": { "value": "4" },
+        ".properties.system_blobstore.external.region": { "value": $aws_region },
+        ".properties.system_blobstore.external.endpoint": { "value": $s3_endpoint }
+      }
+    elif $iaas == "gcp" then
+      {
+        ".properties.system_blobstore": { "value": "external_gcs" },
+        ".properties.system_blobstore.external_gcs.buildpacks_bucket": { "value": "\($terraform_prefix)-buildpacks" },
+        ".properties.system_blobstore.external_gcs.droplets_bucket": { "value": "\($terraform_prefix)-droplets" },
+        ".properties.system_blobstore.external_gcs.packages_bucket": { "value": "\($terraform_prefix)-packages" },
+        ".properties.system_blobstore.external_gcs.resources_bucket": { "value": "\($terraform_prefix)-resources" },
+        ".properties.system_blobstore.external_gcs.access_key": { "value": $gcp_storage_access_key },
+        ".properties.system_blobstore.external_gcs.secret_key": { "value": { "secret": $gcp_storage_secret_key } }
+      }
+    else
+      .
+    end
+
+    +
+
     # SSL Termination
     {
       ".properties.networking_poe_ssl_certs": {
