@@ -229,6 +229,14 @@ cf_properties=$(
     --arg db_networkpolicyserverdb_password "$db_networkpolicyserverdb_password" \
     --arg db_nfsvolumedb_username "$db_nfsvolumedb_username" \
     --arg db_nfsvolumedb_password "$db_nfsvolumedb_password" \
+    --arg aws_access_key "${aws_access_key:-''}" \
+    --arg aws_secret_key "${aws_secret_key:-''}" \
+    --arg aws_region "${aws_region:-''}" \
+    --arg gcp_storage_access_key "${gcp_storage_access_key:-''}" \
+    --arg gcp_storage_secret_key "${gcp_storage_secret_key:-''}" \
+    --argjson credhub_encryption_keys "$credhub_encryption_keys_json" \
+    --argjson networking_poe_ssl_certs "$networking_poe_ssl_certs_json" \
+    --arg container_networking_nw_cidr "$CONTAINER_NETWORKING_NW_CIDR" \
     '
     {
       ".properties.system_blobstore": {
