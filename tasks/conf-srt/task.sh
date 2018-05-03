@@ -821,6 +821,21 @@ cf_resources=$(
     else
       .
     end
+
+    |
+
+    # ELBs
+
+    if $iaas == "aws" then
+      .router |= . + { "elb_names": ["\($terraform_prefix)-Pcf-Http-Elb"] }
+      | .diego_brain |= . + { "elb_names": ["\($terraform_prefix)-Pcf-Ssh-Elb"] }
+    elif $iaas == "gcp" then
+      .router |= . + { "elb_names": ["http:\($terraform_prefix)-http-lb-backend","tcp:\($terraform_prefix)-wss-logs"] }
+      | .diego_brain |= . + { "elb_names": ["tcp:\($terraform_prefix)-ssh-proxy"] }
+    else
+      .
+    end
+    '
     '
 )
 
