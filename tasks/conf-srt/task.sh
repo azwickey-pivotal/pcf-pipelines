@@ -229,6 +229,7 @@ cf_properties=$(
     --arg db_networkpolicyserverdb_password "$db_networkpolicyserverdb_password" \
     --arg db_nfsvolumedb_username "$db_nfsvolumedb_username" \
     --arg db_nfsvolumedb_password "$db_nfsvolumedb_password" \
+    --arg s3_endpoint "$S3_ENDPOINT" \
     --arg aws_access_key "${aws_access_key:-''}" \
     --arg aws_secret_key "${aws_secret_key:-''}" \
     --arg aws_region "${aws_region:-''}" \
