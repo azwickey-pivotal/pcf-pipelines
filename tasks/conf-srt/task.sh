@@ -136,6 +136,7 @@ fi
 
 cf_properties=$(
   jq -n \
+    --arg terraform_prefix $terraform_prefix \
     --arg tcp_routing "$TCP_ROUTING" \
     --arg tcp_routing_ports "$TCP_ROUTING_PORTS" \
     --arg loggregator_endpoint_port "$LOGGREGATOR_ENDPOINT_PORT" \
