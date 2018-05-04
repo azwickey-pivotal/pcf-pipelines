@@ -784,6 +784,7 @@ jobs:
       SINGLETON_JOB_AZ: {{gcp_zone_1}}
       DEPLOYMENT_NW_AZS: {{gcp_zone_all}}
       NETWORK_NAME: services-1
+      SCS_BUILDPACK: {{scs_buildpack}}
   - task: configure-product
     file: pcf-pipelines/tasks/configure-product/task.yml
     params:
