@@ -178,3 +178,12 @@ rmq_errands_to_change: all
 mysql_major_minor_version: ^2\.2\.[0-9]+$ # ERT minor version to track (e.g ^2\.0\.[0-9]+$ will track 2.0.x versions)
 mysql_errands_to_change: all
 mysq_backup_cron: "0 0 1 0 0"
+
+###### SCDF config ######
+scdf_major_minor_version: ^1\.0\.[0-9]+$
+scdf_errands_to_change: all
+
+###### SCS config ######
+scs_major_minor_version: ^1\.5\.[0-9]+$
+scs_errands_to_change: all
+scs_buildpack: java_buildpack_offline
