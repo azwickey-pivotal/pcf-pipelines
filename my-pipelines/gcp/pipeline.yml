@@ -88,7 +88,7 @@ resources:
   source:
     api_token: {{pivnet_token}}
     product_slug: apm
-    product_version: {{scs_major_minor_version}}
+    product_version: {{metrics_major_minor_version}}
     sort_by: semver
 
 jobs:
