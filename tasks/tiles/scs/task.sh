@@ -21,7 +21,7 @@ product_properties=$(
     --arg buildpack $SCS_BUILDPACK \
     '
     {
-      ".deploy-service-broker.buildpack": { "value": $buildpack },
+      ".deploy-service-broker.buildpack": { "value": $buildpack }
     }
     '
 )
@@ -47,8 +47,12 @@ product_network=$(
     '
 )
 
-product_resources=
-
+product_resources=$(
+  jq -n \
+    '
+    { }
+    '
+)
 echo $product_properties
 echo $product_network
 echo $product_resources
