@@ -6,3 +6,5 @@ config
 azure-prepare-env/params.yml
 azure-prepare-env/creds.yml
 install-pcf/aws/params-private.yml
+
+my-pipelines/gcp/params.yml
