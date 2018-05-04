@@ -83,6 +83,14 @@ resources:
     product_version: {{scs_major_minor_version}}
     sort_by: semver
 
+- name: pivnet-metrics
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: apm
+    product_version: {{scs_major_minor_version}}
+    sort_by: semver
+
 jobs:
 - name: wipe-env
   serial_groups: [terraform]
@@ -776,7 +784,6 @@ jobs:
       SINGLETON_JOB_AZ: {{gcp_zone_1}}
       DEPLOYMENT_NW_AZS: {{gcp_zone_all}}
       NETWORK_NAME: services-1
-      SCS_BUILDPACK: {{scs_buildpack}}
   - task: configure-product
     file: pcf-pipelines/tasks/configure-product/task.yml
     params:
@@ -798,6 +805,82 @@ jobs:
       OPSMAN_USERNAME: {{opsman_admin_username}}
       OPSMAN_PASSWORD: {{opsman_admin_password}}
       ERRANDS_TO_CHANGE: {{scs_errands_to_change}}
+      OPSMAN_CLIENT_ID: ""
+      OPSMAN_CLIENT_SECRET: ""
+
+- name: stage-metrics
+  serial_groups: [opsman]
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pivnet-opsmgr
+      passed: [deploy-ert]
+      trigger: false
+      params: {globs: []}
+    - get: pivnet-product
+      resource: pivnet-metrics
+      params:
+        globs:
+        - "*.pivotal"
+  - task: upload-tile
+    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    params:
+      OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token_legacy}}
+      IAAS: "google"
+      NO_PROXY: ""
+      OM_IP: ""
+      OPSMAN_CLIENT_ID: ""
+      OPSMAN_CLIENT_SECRET: ""
+  - task: stage-product
+    file: pcf-pipelines/tasks/stage-product/task.yml
+    params:
+      OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OM_IP: ""
+      OPSMAN_CLIENT_ID: ""
+      OPSMAN_CLIENT_SECRET: ""
+
+- name: deploy-metrics
+  serial_groups: [opsman]
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pivnet-opsmgr
+      passed: [stage-metrics]
+      trigger: true
+      params: {globs: []}
+    - get: terraform-state
+  - task: generate-config
+    file: pcf-pipelines/tasks/tiles/metrics/task.yml
+    params:
+      SINGLETON_JOB_AZ: {{gcp_zone_1}}
+      DEPLOYMENT_NW_AZS: {{gcp_zone_all}}
+      NETWORK_NAME: services-1
+  - task: configure-product
+    file: pcf-pipelines/tasks/configure-product/task.yml
+    params:
+      OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      OM_IP: ""
+      OPSMAN_CLIENT_ID: ""
+      OPSMAN_CLIENT_SECRET: ""
+      PRODUCT_NAME: "apm"
+      PRODUCT_PROPERTIES_FILE: "configuration/product_properties"
+      PRODUCT_NETWORK_FILE: "configuration/product_network"
+      PRODUCT_RESOURCES_FILE: "configuration/product_resources"
+  - task: update-errands
+    file: pcf-pipelines/tasks/when-changed-errands/task.yml
+    params:
+      PRODUCT_NAME: "apm"
+      OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      ERRANDS_TO_CHANGE: {{metrics_errands_to_change}}
       OPSMAN_CLIENT_ID: ""
       OPSMAN_CLIENT_SECRET: ""
 

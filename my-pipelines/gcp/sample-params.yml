@@ -187,3 +187,7 @@ scdf_errands_to_change: all
 scs_major_minor_version: ^1\.5\.[0-9]+$
 scs_errands_to_change: all
 scs_buildpack: java_buildpack_offline
+
+###### PCF Metrics config ######
+metrics_major_minor_version: ^1\.4\.[0-9]+$
+metrics_errands_to_change: all
