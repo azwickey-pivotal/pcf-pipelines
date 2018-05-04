@@ -22,8 +22,12 @@ product_properties=$(
     --arg rmq_password $RMQ_PASSWORD \
     '
     {
-      ".rabbitmq-server.server_admin_credentials.identity": { "value": $rmq_user },
-      ".rabbitmq-server.server_admin_credentials.password": { "value": $rmq_password }
+      ".rabbitmq-server.server_admin_credentials": {
+        "value": {
+          "identity": $rmq_user,
+          "password": $rmq_password
+        }
+      },
     }
     '
 )
