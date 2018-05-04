@@ -53,17 +53,14 @@ product_network=$(
 product_resources=$(
   jq -n \
     --argjson internet_connected $INTERNET_CONNECTED \
-    --argjson rabbitmq_server_instances $RMQ_SERVER_INSTANCES \
-    --argjson rabbitmq_haproxy_instances $RMQ_HAPROXY_INSTANCES \
-    --argjson rabbitmq_broker_instances $RMQ_BROKER_INSTANCES \
-    --argjson on_demand_broker_instances $RMQ_ODB_INSTANCES \
+    --argjson odb_instances $REDIS_ODB_INSTANCES \
+    --argjson broker_instances $REDIS_BROKER_INSTANCES \
+    --argjson dedicated_node_instances $REDIS_DEDICATED_INSTANCES \
     '
     {
-        "rabbitmq-server": { "instances": $rabbitmq_server_instances },
-        "rabbitmq-haproxy": { "instances": $rabbitmq_haproxy_instances },
-        "rabbitmq-broker": { "instances": $rabbitmq_broker_instances },
-        "on-demand-broker": { "instances": $on_demand_broker_instances }
-
+        "redis-on-demand-broker": { "instances": $odb_instances },
+        "cf-redis-broker": { "instances": $broker_instances },
+        "dedicated-node": { "instances": $dedicated_node_instances },
     }
     '
 )

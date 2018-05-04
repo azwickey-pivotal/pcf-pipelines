@@ -369,7 +369,7 @@ jobs:
       OPSMAN_CLIENT_SECRET: ""
 
   - task: update-errands
-    file: pcf-pipelines/tasks/when-changes-errands/task.yml
+    file: pcf-pipelines/tasks/when-changed-errands/task.yml
     params:
       PRODUCT_NAME: cf
       OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
@@ -431,7 +431,7 @@ jobs:
     - get: pcf-pipelines
     - get: pivnet-opsmgr
       passed: [stage-redis]
-      trigger: false
+      trigger: true
       params: {globs: []}
     - get: terraform-state
   - task: generate-config
@@ -440,12 +440,9 @@ jobs:
       SINGLETON_JOB_AZ: {{gcp_zone_1}}
       DEPLOYMENT_NW_AZS: {{gcp_zone_all}}
       NETWORK_NAME: services-1
-      RMQ_USER: {{rmq_user}}
-      RMQ_PASSWORD: {{rmq_password}}
-      RMQ_SERVER_INSTANCES: 3
-      RMQ_HAPROXY_INSTANCES: 1
-      RMQ_BROKER_INSTANCES: 1
-      RMQ_ODB_INSTANCES: 1
+      REDIS_DEDICATED_INSTANCES: 3
+      REDIS_BROKER_INSTANCES: 1
+      REDIS_ODB_INSTANCES: 1
       INTERNET_CONNECTED: {{internet_connected}}
   - task: configure-product
     file: pcf-pipelines/tasks/configure-product/task.yml
@@ -460,6 +457,16 @@ jobs:
       PRODUCT_PROPERTIES_FILE: "configuration/product_properties"
       PRODUCT_NETWORK_FILE: "configuration/product_network"
       PRODUCT_RESOURCES_FILE: "configuration/product_resources"
+  - task: update-errands
+    file: pcf-pipelines/tasks/when-changed-errands/task.yml
+    params:
+      PRODUCT_NAME: "p-redis"
+      OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      ERRANDS_TO_CHANGE: {{redis_errands_to_change}}
+      OPSMAN_CLIENT_ID: ""
+      OPSMAN_CLIENT_SECRET: ""
 
 - name: stage-rabbit
   serial_groups: [opsman]
@@ -505,7 +512,7 @@ jobs:
     - get: pcf-pipelines
     - get: pivnet-opsmgr
       passed: [stage-rabbit]
-      trigger: false
+      trigger: true
       params: {globs: []}
     - get: terraform-state
   - task: generate-config
@@ -535,7 +542,7 @@ jobs:
       PRODUCT_NETWORK_FILE: "configuration/product_network"
       PRODUCT_RESOURCES_FILE: "configuration/product_resources"
   - task: update-errands
-    file: pcf-pipelines/tasks/when-changes-errands/task.yml
+    file: pcf-pipelines/tasks/when-changed-errands/task.yml
     params:
       PRODUCT_NAME: "p-rabbitmq"
       OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
@@ -588,7 +595,7 @@ jobs:
     - get: pcf-pipelines
     - get: pivnet-opsmgr
       passed: [stage-mysql]
-      trigger: false
+      trigger: true
       params: {globs: []}
     - get: terraform-state
   - task: generate-config
@@ -617,6 +624,16 @@ jobs:
       PRODUCT_PROPERTIES_FILE: "configuration/product_properties"
       PRODUCT_NETWORK_FILE: "configuration/product_network"
       PRODUCT_RESOURCES_FILE: "configuration/product_resources"
+  - task: update-errands
+    file: pcf-pipelines/tasks/when-changed-errands/task.yml
+    params:
+      PRODUCT_NAME: "pivotal-mysql"
+      OPSMAN_DOMAIN_OR_IP_ADDRESS: {{opsman_domain_or_ip_address}}
+      OPSMAN_USERNAME: {{opsman_admin_username}}
+      OPSMAN_PASSWORD: {{opsman_admin_password}}
+      ERRANDS_TO_CHANGE: {{mysql_errands_to_change}}
+      OPSMAN_CLIENT_ID: ""
+      OPSMAN_CLIENT_SECRET: ""
 
 - name: apply-tile-changes
   serial_groups: [opsman]
