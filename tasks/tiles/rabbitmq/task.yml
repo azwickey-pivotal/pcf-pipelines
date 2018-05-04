@@ -15,7 +15,7 @@ outputs:
   - name: configuration
 
 run:
-  path: pcf-pipelines/tasks/rabbitmq/task.sh
+  path: pcf-pipelines/tasks/tiles/rabbitmq/task.sh
 
 params:
   SINGLETON_JOB_AZ:
