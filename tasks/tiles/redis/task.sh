@@ -21,7 +21,7 @@ product_properties=$(
     --arg az "$SINGLETON_JOB_AZ" \
     '
     {
-      ".properties.syslog_selector.inactive": { "value": "enabled" },
+      ".properties.syslog_selector": { "value": "No" },
       ".properties.small_plan_selector.active.az_single_select": { "value": $az },
       ".properties.medium_plan_selector.active.az_single_select": { "value": $az },
       ".properties.large_plan_selector.active.az_single_select": { "value": $az },
