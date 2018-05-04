@@ -297,9 +297,8 @@ jobs:
       ROUTER_REQUEST_TIMEOUT_IN_SEC: 900
       MYSQL_MONITOR_EMAIL: azwickey@pivotal.io
       IAAS: gcp
-      POE_SSL_NAME1: {{poe_ssl_name1}}
-      POE_SSL_CERT1: {{poe_ssl_cert1}}
-      POE_SSL_KEY1: {{poe_ssl_key1}}
+      SSL_CERT: {{poe_ssl_cert1}}
+      SSL_PRIVATE_KEY: {{poe_ssl_key1}}
       gcp_storage_access_key: {{gcp_storage_access_key}}
       gcp_storage_secret_key: {{gcp_storage_secret_key}}
       PCF_ERT_DOMAIN: {{pcf_ert_domain}}
