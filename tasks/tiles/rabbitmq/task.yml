@@ -1,0 +1,29 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: pcfnorm/rootfs
+
+inputs:
+  - name: pcf-pipelines
+  - name: terraform-state
+
+outputs:
+  - name: configuration
+
+run:
+  path: pcf-pipelines/tasks/rabbitmq/task.sh
+
+params:
+  SINGLETON_JOB_AZ:
+  DEPLOYMENT_NW_AZS:
+  NETWORK_NAME:
+  RMQ_USER:
+  RMQ_PASSWORD:
+  RMQ_SERVER_INSTANCES:
+  RMQ_HAPROXY_INSTANCES:
+  RMQ_BROKER_INSTANCES:
+  RMQ_ODB_INSTANCES:
