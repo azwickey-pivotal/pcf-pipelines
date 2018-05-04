@@ -18,22 +18,8 @@ function isPopulated() {
 
 product_properties=$(
   jq -n \
-    --arg azs "$DEPLOYMENT_NW_AZS" \
-    --arg gcp_project "$GCP_PROJECT_ID" \
-    --arg auth_json "$GCP_SERVICE_ACCOUNT_KEY" \
-    --arg prefix "$GCP_RESOURCE_PREFIX" \
-    --arg cron "$MYSQL_BACKUP_CRON" \
     '
-    {
-      ".properties.plan1_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
-      ".properties.plan2_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
-      ".properties.plan3_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
-      ".properties.backups_selector": { "value": "GCS" },
-      ".properties.backups_selector.gcs.project_id": { "value": $gcp_project },
-      ".properties.backups_selector.gcs.bucket_name": { "value": "\($prefix)-mysql-backups" },
-      ".properties.backups_selector.gcs.service_account_json": { "value": $auth_json },
-      ".properties.backups_selector.gcs.cron_schedule": { "value": $cron },
-    }
+    { }
     '
 )
 
@@ -60,12 +46,8 @@ product_network=$(
 
 product_resources=$(
   jq -n \
-    --argjson internet_connected $INTERNET_CONNECTED \
-    --argjson dedicated_broker_instances $MYSQL_DEDICATED_BROKER_INSTANCES \
     '
-    {
-        "dedicated-mysql-broker": { "instances": $dedicated_broker_instances },
-    }
+    { }
     '
 )
 echo $product_properties
