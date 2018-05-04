@@ -49,16 +49,16 @@ product_network=$(
 product_resources=$(
   jq -n \
     --argjson internet_connected $INTERNET_CONNECTED \
-    --argjson rabbitmq-server_instances $RMQ_SERVER_INSTANCES \
-    --argjson rabbitmq-haproxy_instances $RMQ_HAPROXY_INSTANCES \
-    --argjson rabbitmq-broker_instances $RMQ_BROKER_INSTANCES \
-    --argjson on-demand-broker_instances $RMQ_ODB_INSTANCES \
+    --argjson rabbitmq_server_instances $RMQ_SERVER_INSTANCES \
+    --argjson rabbitmq_haproxy_instances $RMQ_HAPROXY_INSTANCES \
+    --argjson rabbitmq_broker_instances $RMQ_BROKER_INSTANCES \
+    --argjson on_demand_broker_instances $RMQ_ODB_INSTANCES \
     '
     {
-        "rabbitmq-server": { "instances": $rabbitmq-server_instances },
-        "rabbitmq-haproxy": { "instances": $rabbitmq-haproxy_instances },
-        "rabbitmq-broker": { "instances": $rabbitmq-broker_instances },
-        "on-demand-broker": { "instances": $on-demand-broker_instances }
+        "rabbitmq-server": { "instances": $rabbitmq_server_instances },
+        "rabbitmq-haproxy": { "instances": $rabbitmq_haproxy_instances },
+        "rabbitmq-broker": { "instances": $rabbitmq_broker_instances },
+        "on-demand-broker": { "instances": $on_demand_broker_instances }
 
     }
     '
