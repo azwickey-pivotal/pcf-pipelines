@@ -21,7 +21,6 @@ product_properties=$(
     --arg azs "$DEPLOYMENT_NW_AZS" \
     '
     {
-      ".properties.syslog_selector": { "value": "No" },
       ".properties.plan1_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
       ".properties.plan2_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
       ".properties.plan3_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
