@@ -1,0 +1,180 @@
+# GCP project to create the infrastructure in
+gcp_project_id: xxxx
+# GCP region
+gcp_region: us-east1
+# Identifier to prepend to GCP infrastructure names/labels; this should be globally unique
+gcp_resource_prefix: xxxx
+# GCP credentials JSON. The service account must have the Editor role.
+gcp_service_account_key: |
+  {
+    xxxx
+  }
+
+# GCP Interopable storage access key: https://console.cloud.google.com/storage/settings
+gcp_storage_access_key: xxxx
+gcp_storage_secret_key: xxxx
+# Storage Location
+gcp_storage_bucket_location: US
+# GCP Zones
+gcp_zone_1: us-east1-b
+gcp_zone_2: us-east1-c
+gcp_zone_3: us-east1-d
+gcp_zone_all: us-east1-b,us-east1-c,us-east1-d
+
+terraform_statefile_bucket: xxxx
+
+# Ciphers
+# An ordered, colon-delimited list of Golang supported TLS cipher suites in OpenSSL format.
+# Operators should verify that these are supported by any clients or downstream components that will initiate TLS handshakes with the Router/HAProxy.
+# The recommended settings are filled in below, change as necessary.
+router_tls_ciphers: "ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384"
+haproxy_tls_ciphers: "DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384"
+
+# C2C Networking network CIDR
+container_networking_nw_cidr: 10.255.0.0/16
+
+# For credhub integration, Set the number of credhub instances in resource config to 2
+# Primary Encryption Name MUST match one of the encryption key names provided
+# Encryption keys 2 and 3 are optional
+credhub_primary_encryption_name: dummy encryption key 1
+credhub_encryption_key_name1: dummy encryption key 1
+credhub_encryption_key_secret1: CHANGEME_CHANGEME_CHANGEME_CHANGEME
+credhub_encryption_key_name2: # Optional Name 2
+credhub_encryption_key_secret2: # Optional Secret 2
+credhub_encryption_key_name3: # Optional Name 3
+credhub_encryption_key_secret3: # Optional Secret 2
+
+# DB Creds
+# Usernames must be 16 characters or fewer
+db_accountdb_password: xxxx
+db_accountdb_username: xxxx
+db_app_usage_service_password: xxxx
+db_app_usage_service_username: xxxx
+db_autoscale_password: xxxx
+db_autoscale_username: xxxx
+db_ccdb_password: xxxx
+db_ccdb_username: xxxx
+db_diego_password: xxxx
+db_diego_username: xxxx
+db_locket_password: xxxx
+db_locket_username: xxxx
+db_networkpolicyserverdb_password: xxxx
+db_networkpolicyserverdb_username: xxxx
+db_nfsvolumedb_password: xxxx
+db_nfsvolumedb_username: xxxx
+db_notifications_password: xxxx
+db_notifications_username: xxxx
+db_routing_password: xxxx
+db_routing_username: xxxx
+db_silk_password: xxxx
+db_silk_username: xxxx
+db_uaa_password: xxxx
+db_uaa_username: xxxx
+
+# Domain Names for ERT
+# This is the domain you will access ERT with, for example: pcf.example.com.  A hosted zone will be created for this domain.
+pcf_ert_domain: xxxx
+# e.g. system.pcf.example.com, this needs to be a subdomain of pcf_ert_domain
+system_domain: xxxx
+# e.g. apps.pcf.example.com, this needs to be a subdomain of pcf_ert_domain
+apps_domain: xxxx
+
+# Errands to disable prior to deploying ERT
+# Valid values:
+#   all
+#   none
+#   "" (empty string - equivalent to none)
+#   Any combination of the following, separated by comma:
+#     bootstrap
+#     deploy-autoscaler
+#     deploy-notifications
+#     deploy-notifications-ui
+#     nfsbrokerpush
+#     push-apps-manager
+#     push-pivotal-account
+#     push-usage-service
+#     rejoin-unsafe
+#     send-email
+#     smoke_tests
+#     test-autoscaling
+ert_errands_to_disable: none
+ert_errands_to_change: all
+
+# PCF Elastic Runtime minor version to track
+ert_major_minor_version: ^2\.1\.[0-9]+$ # ERT minor version to track (e.g ^2\.0\.[0-9]+$ will track 2.0.x versions)
+
+# Optional. Duration in seconds to maintain an open connection when client supports keep-alive.
+frontend_idle_timeout: 601
+
+# Optional - if your git repo requires an SSH key.
+git_private_key:
+
+# Required if haproxy_forward_tls is enabled - HAProxy will use the CA provided to verify the certificates provided by the router.
+haproxy_backend_ca:
+
+# If enabled HAProxy will forward all requests to the router over TLS (enable|disable)
+haproxy_forward_tls: disable
+
+# Whether or not the ERT VMs are internet connected.
+internet_connected: false
+
+# Email address for sending mysql monitor notifications
+mysql_monitor_recipient_email:  xxxx
+
+# Operations Manager credentials to set
+# opsman_admin_username/opsman_admin_password needs to be specified
+opsman_admin_username: xxxx
+opsman_admin_password: xxxx
+
+# # The domain to access Operations Manager;
+opsman_domain_or_ip_address: xxxx #This must be your pcf_ert_domain with "opsman." as a prefix. For example, opsman.pcf.example.com
+
+# PCF Ops Manager minor version to track
+opsman_major_minor_version: ^2\.1\.[0-9]+$ # Ops Manager minor version to track (e.g ^2\.0\.[0-9]+$ will track 2.0.x versions)
+
+# Optional PEM-encoded certificates to add to BOSH director
+opsman_trusted_certs: |
+
+# Pivnet token for downloading resources from Pivnet. Find this token at https://network.pivotal.io/users/dashboard/edit-profile
+pivnet_token: xxxx
+pivnet_token_legacy: xxxx
+
+# Optional. If blank the cert(s) will be generated:
+poe_ssl_name1: pcf-signed-auto
+poe_ssl_cert1:
+poe_ssl_key1:
+
+# Optional - these certificates can be used to validate the certificates from incoming client requests.
+# All CA certificates should be appended together into a single collection of PEM-encoded entries.
+routing_custom_ca_certificates:
+
+# Disable HTTP on gorouters (true|false)
+routing_disable_http: false
+
+# Support for the X-Forwarded-Client-Cert header. Possible values: (load_balancer|ha_proxy|router)
+routing_tls_termination: load_balancer
+
+# Setting appropriate Application Security Groups is critical for a secure
+# deployment. Change the value of the param below to "X" to acknowledge that
+# once the Elastic Runtime deployment completes, you will review and set the
+# appropriate application security groups.
+# See https://docs.pivotal.io/pivotalcf/opsguide/app-sec-groups.html
+security_acknowledgement: X
+
+enable_ssh: true
+route_services: enable
+
+###### Redis config ######
+redis_major_minor_version: ^1\.12\.[0-9]+$ # ERT minor version to track (e.g ^2\.0\.[0-9]+$ will track 2.0.x versions)
+redis_errands_to_change: all
+
+###### RabbitMQ config ######
+rabbit_major_minor_version: ^1\.12\.[0-9]+$ # ERT minor version to track (e.g ^2\.0\.[0-9]+$ will track 2.0.x versions)
+rmq_user: xxxx
+rmq_password: xxxx
+rmq_errands_to_change: all
+
+###### MySQL config ######
+mysql_major_minor_version: ^2\.2\.[0-9]+$ # ERT minor version to track (e.g ^2\.0\.[0-9]+$ will track 2.0.x versions)
+mysql_errands_to_change: all
+mysq_backup_cron: "0 0 1 0 0"
