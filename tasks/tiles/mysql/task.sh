@@ -24,7 +24,12 @@ product_properties=$(
       ".properties.plan1_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
       ".properties.plan2_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
       ".properties.plan3_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
-
+      ".properties.backups_selector.gcs": { "value": "enabled") },
+      ".properties.backups_selector.gcs.project_id": { "value": "enabled") },
+      ".properties.backups_selector.gcs.bucket_name": { "value": "enabled") },
+      ".properties.backups_selector.gcs.service_account_json": { "value": "enabled") },
+      ".properties.backups_selector.gcs.cron_schedule": { "value": "enabled") },
+      ".properties.backups_selector.gcs.enable_email_alerts": { "value": "enabled") },
     }
     '
 )
