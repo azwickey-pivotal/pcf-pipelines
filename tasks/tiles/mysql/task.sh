@@ -22,6 +22,7 @@ product_properties=$(
     --arg gcp_project "$GCP_PROJECT_ID" \
     --arg auth_json "$GCP_SERVICE_ACCOUNT_KEY" \
     --arg prefix "$GCP_RESOURCE_PREFIX" \
+    --arg cron "$MYSQL_BACKUP_CRON" \
     '
     {
       ".properties.plan1_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
@@ -31,7 +32,7 @@ product_properties=$(
       ".properties.backups_selector.gcs.project_id": { "value": $gcp_project },
       ".properties.backups_selector.gcs.bucket_name": { "value": "\($prefix)-mysql-backups" },
       ".properties.backups_selector.gcs.service_account_json": { "value": $auth_json },
-      ".properties.backups_selector.gcs.cron_schedule": { "value": "enabled" },
+      ".properties.backups_selector.gcs.cron_schedule": { "value": $cron },
     }
     '
 )
