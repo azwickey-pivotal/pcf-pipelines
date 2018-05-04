@@ -17,8 +17,18 @@ function main() {
     configure-product \
     --product-name "${PRODUCT_NAME}" \
     --product-network "${configuration_network}" \
-    --product-properties "${configuration_properties}" \
-    --product-resources "${configuration_resources}"
+
+    om-linux \
+      --target "https://${OPSMAN_DOMAIN_OR_IP_ADDRESS}" \
+      --client-id "${OPSMAN_CLIENT_ID}" \
+      --client-secret "${OPSMAN_CLIENT_SECRET}" \
+      --username "${OPSMAN_USERNAME}" \
+      --password "${OPSMAN_PASSWORD}" \
+      --skip-ssl-validation \
+      configure-product \
+      --product-name "${PRODUCT_NAME}" \
+      --product-properties "${configuration_properties}" \
+      --product-resources "${configuration_resources}"
 }
 
 function read_json_from_file() {
