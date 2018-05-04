@@ -29,7 +29,7 @@ product_properties=$(
       ".properties.plan3_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
       ".properties.backups_selector": { "value": "GCS" },
       ".properties.backups_selector.gcs.project_id": { "value": $gcp_project },
-      ".properties.backups_selector.gcs.bucket_name": { "value": \($prefix)_mysql_backups },
+      ".properties.backups_selector.gcs.bucket_name": { "value": ($prefix)_mysql_backups },
       ".properties.backups_selector.gcs.service_account_json": { "value": $auth_json },
       ".properties.backups_selector.gcs.cron_schedule": { "value": "enabled" },
     }
