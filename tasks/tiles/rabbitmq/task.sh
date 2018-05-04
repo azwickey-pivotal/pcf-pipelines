@@ -63,7 +63,9 @@ product_resources=$(
     }
     '
 )
-
+echo $product_properties
+echo $product_network
+echo $product_resources
 echo $product_properties >> configuration/product_properties
 echo $product_network >> configuration/product_network
 echo $product_resources >> configuration/product_resources
