@@ -22,6 +22,7 @@ product_properties=$(
     --arg rmq_password $RMQ_PASSWORD \
     '
     {
+      ".properties.disk_alarm_threshold": { "value": "mem_relative_1_0" },
       ".rabbitmq-server.server_admin_credentials": {
         "value": {
           "identity": $rmq_user,
