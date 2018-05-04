@@ -20,10 +20,13 @@ product_properties=$(
   jq -n \
     --arg rmq_user $RMQ_USER \
     --arg rmq_password $RMQ_PASSWORD \
+    --arg azs "$DEPLOYMENT_NW_AZS" \
     '
     {
       ".properties.disk_alarm_threshold": { "value": "mem_relative_1_0" },
       ".properties.syslog_selector": { "value": "disabled" },
+      ".properties.on_demand_broker_plan_1_rabbitmq_az_placement": ($azs | split(",") | map({name: .})),
+      ".properties.on_demand_broker_plan_1_disk_limit_acknowledgement": { "value": "acknowledge" },
       ".rabbitmq-server.server_admin_credentials": {
         "value": {
           "identity": $rmq_user,
