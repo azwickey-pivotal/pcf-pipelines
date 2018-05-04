@@ -54,12 +54,10 @@ product_resources=$(
   jq -n \
     --argjson internet_connected $INTERNET_CONNECTED \
     --argjson odb_instances $REDIS_ODB_INSTANCES \
-    --argjson broker_instances $REDIS_BROKER_INSTANCES \
     --argjson dedicated_node_instances $REDIS_DEDICATED_INSTANCES \
     '
     {
         "redis-on-demand-broker": { "instances": $odb_instances },
-        "cf-redis-broker": { "instances": $broker_instances },
         "dedicated-node": { "instances": $dedicated_node_instances },
     }
     '

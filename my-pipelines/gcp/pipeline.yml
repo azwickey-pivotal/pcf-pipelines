@@ -441,7 +441,6 @@ jobs:
       DEPLOYMENT_NW_AZS: {{gcp_zone_all}}
       NETWORK_NAME: services-1
       REDIS_DEDICATED_INSTANCES: 3
-      REDIS_BROKER_INSTANCES: 1
       REDIS_ODB_INSTANCES: 1
       INTERNET_CONNECTED: {{internet_connected}}
   - task: configure-product
