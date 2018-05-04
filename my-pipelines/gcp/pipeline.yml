@@ -692,12 +692,6 @@ jobs:
       SINGLETON_JOB_AZ: {{gcp_zone_1}}
       DEPLOYMENT_NW_AZS: {{gcp_zone_all}}
       NETWORK_NAME: services-1
-      GCP_PROJECT_ID: {{gcp_project_id}}
-      GCP_SERVICE_ACCOUNT_KEY: {{gcp_service_account_key}}
-      GCP_RESOURCE_PREFIX: {{gcp_resource_prefix}}
-      MYSQL_BACKUP_CRON: {{mysq_backup_cron}}
-      MYSQL_DEDICATED_BROKER_INSTANCES: 1
-      INTERNET_CONNECTED: {{internet_connected}}
   - task: configure-product
     file: pcf-pipelines/tasks/configure-product/task.yml
     params:
@@ -707,7 +701,7 @@ jobs:
       OM_IP: ""
       OPSMAN_CLIENT_ID: ""
       OPSMAN_CLIENT_SECRET: ""
-      PRODUCT_NAME: "pivotal-mysql"
+      PRODUCT_NAME: "p-dataflow"
       PRODUCT_PROPERTIES_FILE: "configuration/product_properties"
       PRODUCT_NETWORK_FILE: "configuration/product_network"
       PRODUCT_RESOURCES_FILE: "configuration/product_resources"
