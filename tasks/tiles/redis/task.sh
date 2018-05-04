@@ -18,12 +18,10 @@ function isPopulated() {
 
 product_properties=$(
   jq -n \
-    --arg rmq_user $RMQ_USER \
-    --arg rmq_password $RMQ_PASSWORD \
     --arg az "$SINGLETON_JOB_AZ" \
     '
     {
-      ".properties.syslog_selector": { "value": "disabled" },
+      ".properties.syslog_selector.inactive": { "value": "enabled" },
       ".properties.small_plan_selector.active.az_single_select": { "value": $az },
       ".properties.medium_plan_selector.active.az_single_select": { "value": $az },
       ".properties.large_plan_selector.active.az_single_select": { "value": $az },
