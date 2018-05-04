@@ -16,8 +16,8 @@ function main() {
     --skip-ssl-validation \
     configure-product \
     --product-name "${PRODUCT_NAME}" \
-    --product-properties "${configuration_properties}" \
     --product-network "${configuration_network}" \
+    --product-properties "${configuration_properties}" \
     --product-resources "${configuration_resources}"
 }
 
