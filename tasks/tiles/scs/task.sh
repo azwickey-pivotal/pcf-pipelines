@@ -47,12 +47,8 @@ product_network=$(
     '
 )
 
-product_resources=$(
-  jq -n \
-    '
-    { }
-    '
-)
+product_resources=
+
 echo $product_properties
 echo $product_network
 echo $product_resources
