@@ -18,23 +18,14 @@ function isPopulated() {
 
 product_properties=$(
   jq -n \
-    --arg rmq_user $RMQ_USER \
-    --arg rmq_password $RMQ_PASSWORD \
     --arg azs "$DEPLOYMENT_NW_AZS" \
     '
     {
-      ".properties.disk_alarm_threshold": { "value": "mem_relative_1_0" },
-      ".properties.syslog_selector": { "value": "disabled" },
-      ".properties.on_demand_broker_plan_1_rabbitmq_az_placement": { "value": ($azs | split(",") | map("\(.)")) },
-      ".properties.on_demand_broker_plan_1_disk_limit_acknowledgement": { "value": [ "acknowledge" ] },
-      ".properties.on_demand_broker_plan_6_rabbitmq_az_placement": { "value": ($azs | split(",") | map("\(.)")) },
-      ".properties.on_demand_broker_plan_6_disk_limit_acknowledgement": { "value": [ "acknowledge" ] },
-      ".rabbitmq-server.server_admin_credentials": {
-        "value": {
-          "identity": $rmq_user,
-          "password": $rmq_password
-        }
-      },
+      ".properties.syslog_selector": { "value": "No" },
+      ".properties.plan1_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
+      ".properties.plan2_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
+      ".properties.plan3_selector.active.az_multi_select": { "value": ($azs | split(",") | map("\(.)")) },
+
     }
     '
 )
@@ -63,17 +54,10 @@ product_network=$(
 product_resources=$(
   jq -n \
     --argjson internet_connected $INTERNET_CONNECTED \
-    --argjson rabbitmq_server_instances $RMQ_SERVER_INSTANCES \
-    --argjson rabbitmq_haproxy_instances $RMQ_HAPROXY_INSTANCES \
-    --argjson rabbitmq_broker_instances $RMQ_BROKER_INSTANCES \
-    --argjson on_demand_broker_instances $RMQ_ODB_INSTANCES \
+    --argjson dedicated_broker_instances $MYSQL_DEDICATED_BROKER_INSTANCES \
     '
     {
-        "rabbitmq-server": { "instances": $rabbitmq_server_instances },
-        "rabbitmq-haproxy": { "instances": $rabbitmq_haproxy_instances },
-        "rabbitmq-broker": { "instances": $rabbitmq_broker_instances },
-        "on-demand-broker": { "instances": $on_demand_broker_instances }
-
+        "dedicated-mysql-broker": { "instances": $dedicated_broker_instances },
     }
     '
 )
