@@ -38,6 +38,9 @@ product_network=$(
       "network": {
         "name": $network_name
       },
+      "service_network": {
+        "name": $network_name
+      },
       "other_availability_zones": ($other_azs | split(",") | map({name: .})),
       "singleton_availability_zone": {
         "name": $singleton_az
