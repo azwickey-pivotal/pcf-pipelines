@@ -20,4 +20,4 @@ params:
   ERRANDS_TO_CHANGE:
 
 run:
-  path: pcf-pipelines/tasks/disable-errands/task.sh
+  path: pcf-pipelines/tasks/when-changed-errands/task.sh

@@ -20,21 +20,13 @@ product_properties=$(
   jq -n \
     --arg rmq_user $RMQ_USER \
     --arg rmq_password $RMQ_PASSWORD \
-    --arg azs "$DEPLOYMENT_NW_AZS" \
+    --arg az "$SINGLETON_JOB_AZ" \
     '
     {
-      ".properties.disk_alarm_threshold": { "value": "mem_relative_1_0" },
-      ".properties.syslog_selector": { "value": "disabled" },
-      ".properties.on_demand_broker_plan_1_rabbitmq_az_placement": { "value": ($azs | split(",") | map("\(.)")) },
-      ".properties.on_demand_broker_plan_1_disk_limit_acknowledgement": { "value": [ "acknowledge" ] },
-      ".properties.on_demand_broker_plan_6_rabbitmq_az_placement": { "value": ($azs | split(",") | map("\(.)")) },
-      ".properties.on_demand_broker_plan_6_disk_limit_acknowledgement": { "value": [ "acknowledge" ] },
-      ".rabbitmq-server.server_admin_credentials": {
-        "value": {
-          "identity": $rmq_user,
-          "password": $rmq_password
-        }
-      },
+      ".properties.syslog_selector": { "value": "inactive" },
+      ".properties.small_plan_selector.active.az_single_select": { "value": $az },
+      ".properties.medium_plan_selector.active.az_single_select": { "value": $az },
+      ".properties.large_plan_selector.active.az_single_select": { "value": $az },
     }
     '
 )
