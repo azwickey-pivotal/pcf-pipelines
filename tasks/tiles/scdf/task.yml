@@ -1,0 +1,29 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: pcfnorm/rootfs
+
+inputs:
+  - name: pcf-pipelines
+  - name: terraform-state
+
+outputs:
+  - name: configuration
+
+run:
+  path: pcf-pipelines/tasks/tiles/scdf/task.sh
+
+params:
+  SINGLETON_JOB_AZ:
+  DEPLOYMENT_NW_AZS:
+  NETWORK_NAME:
+  GCP_PROJECT_ID:
+  GCP_SERVICE_ACCOUNT_KEY:
+  GCP_RESOURCE_PREFIX:
+  MYSQL_BACKUP_CRON:
+  MYSQL_DEDICATED_BROKER_INSTANCES:
+  INTERNET_CONNECTED:
