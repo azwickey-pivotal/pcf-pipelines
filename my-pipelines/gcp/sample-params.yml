@@ -177,7 +177,7 @@ rmq_errands_to_change: all
 ###### MySQL config ######
 mysql_major_minor_version: ^2\.2\.[0-9]+$ # ERT minor version to track (e.g ^2\.0\.[0-9]+$ will track 2.0.x versions)
 mysql_errands_to_change: all
-mysq_backup_cron: "0 0 1 0 0"
+mysq_backup_cron: "0 0 1 1 1"
 
 ###### SCDF config ######
 scdf_major_minor_version: ^1\.0\.[0-9]+$
