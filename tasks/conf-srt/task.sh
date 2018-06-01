@@ -254,9 +254,6 @@ cf_properties=$(
       ".properties.security_acknowledgement": {
         "value": $security_acknowledgement
       },
-      ".properties.push_apps_manager_company_name.": {
-        "value": $company_name
-      },
       ".cloud_controller.system_domain": {
         "value": $system_domain
       },
